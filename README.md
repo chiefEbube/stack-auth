@@ -35,39 +35,6 @@ This project serves as my **Stage Seven project for the HNG Internship**, demons
 
 ---
 
-## **Folder Structure**
-
-```
-stack-auth/
-├── src
-│   ├── config/
-│   │   └── data-source.ts
-│   ├── controllers/
-│   │   ├── auth.controller.ts
-│   │   └── payment.controller.ts
-│   ├── entities/
-│   │   ├── User.ts
-│   │   └── Transaction.ts
-│   ├── routes/
-│   │   ├── auth.routes.ts
-│   │   └── payment.routes.ts
-│   ├── services/
-│   │   ├── auth.service.ts
-│   │   └── payment.service.ts
-│   ├── utils/
-│   │   ├── jwt.ts
-│   │   └── paystack.ts
-│   ├── middleware/
-│   │   └── auth.middleware.ts
-│   └── index.ts
-├── .env.example
-├── package.json
-├── tsconfig.json
-└── README.md
-```
-
----
-
 ## **Environment Variables**
 
 Create a `.env` file using:
