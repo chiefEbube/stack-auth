@@ -1,11 +1,15 @@
 import { Controller, Get, Query, Res, BadRequestException, UnauthorizedException, InternalServerErrorException } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
+import { ApiGoogleAuth, ApiGoogleCallback } from './swagger/auth.swagger';
 
+@ApiTags('auth')
 @Controller('auth')
 export class AuthController {
     constructor(private readonly authService: AuthService) {}
 
     @Get('google')
+    @ApiGoogleAuth()
     async googleAuth(@Res() res: any) {
         try {
             const authUrl = await this.authService.getGoogleAuthUrl();
@@ -16,6 +20,7 @@ export class AuthController {
     }
 
     @Get('google/callback')
+    @ApiGoogleCallback()
     async googleCallback(
         @Query('code') code: string,
         @Query('state') state: string,

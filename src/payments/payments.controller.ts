@@ -1,24 +1,23 @@
 import { Controller, Post, Get, Body, Headers, Param, Query, Req, BadRequestException, UnauthorizedException, HttpCode, HttpStatus, UseGuards } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { Request } from 'express';
 import { PaymentsService } from './payments.service';
 import { InitiatePaymentDto } from './dto/initiate-payment.dto';
-// Note: Uncomment and configure when you have JWT auth set up
-// import { AuthGuard } from '@nestjs/passport';
+import { ApiInitiatePayment, ApiWebhook, ApiCheckStatus } from './swagger/payments.swagger';
 
+@ApiTags('payments')
 @Controller('payments')
 export class PaymentsController {
   constructor(private readonly paymentsService: PaymentsService) {}
 
   @Post('paystack/initiate')
-  // @UseGuards(AuthGuard('jwt')) // Uncomment when JWT auth is implemented
+  @ApiInitiatePayment()
   @HttpCode(HttpStatus.CREATED)
   async initiatePayment(
     @Body() dto: InitiatePaymentDto,
     @Req() req: Request & { user?: { id: string } }
   ) {
-    // For now, extract user_id from body or request
-    // When JWT auth is implemented, use: const userId = req.user.id;
-    const userId = req.body.user_id || req.user?.id;
+    const userId = req.body.user_id;
     
     if (!userId) {
       throw new BadRequestException('User ID is required. Please authenticate or provide user_id in request.');
@@ -28,6 +27,7 @@ export class PaymentsController {
   }
 
   @Post('paystack/webhook')
+  @ApiWebhook()
   @HttpCode(HttpStatus.OK)
   async handleWebhook(
     @Headers('x-paystack-signature') signature: string, 
@@ -37,7 +37,6 @@ export class PaymentsController {
       throw new UnauthorizedException('No signature provided');
     }
 
-    // Body is raw Buffer from express.raw() middleware
     const rawBody = req.body;
     const bodyString = rawBody.toString('utf8');
     const body = JSON.parse(bodyString);
@@ -52,6 +51,7 @@ export class PaymentsController {
   }
 
   @Get(':reference/status')
+  @ApiCheckStatus()
   async checkStatus(
     @Param('reference') reference: string,
     @Query('refresh') refresh?: string
