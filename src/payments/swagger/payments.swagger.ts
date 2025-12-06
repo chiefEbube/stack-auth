@@ -39,7 +39,10 @@ export const ApiInitiatePayment = () =>
         type: 'object',
         properties: {
           statusCode: { type: 'number', example: 400 },
-          message: { type: 'string', example: 'Invalid amount. Amount must be a positive integer in Kobo' },
+          message: { 
+            type: 'string', 
+            example: 'User ID is required. Please authenticate or provide user_id in request.' 
+          },
         },
       },
     }),

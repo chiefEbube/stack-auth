@@ -17,7 +17,7 @@ export class PaymentsController {
     @Body() dto: InitiatePaymentDto,
     @Req() req: Request & { user?: { id: string } }
   ) {
-    const userId = req.body.user_id;
+    const userId = dto.user_id;
     
     if (!userId) {
       throw new BadRequestException('User ID is required. Please authenticate or provide user_id in request.');
