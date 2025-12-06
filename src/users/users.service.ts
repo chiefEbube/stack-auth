@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './user.entity';
 import { Repository } from 'typeorm';
+import { GoogleUserProfile } from 'src/auth/types/google-profile.interface';
 
 @Injectable()
 export class UsersService {
@@ -10,7 +11,7 @@ export class UsersService {
         private usersRepository: Repository<User>,
     ) { }
 
-    async findOrCreate(profile: any): Promise<User> {
+    async findOrCreate(profile: GoogleUserProfile): Promise<User> {
         const { email, name, picture, sub } = profile;
 
         let user = await this.usersRepository.findOne({ where: { email } });

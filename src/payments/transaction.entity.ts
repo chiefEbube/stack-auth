@@ -25,6 +25,9 @@ export class Transaction {
     })
     status: TransactionStatus;
 
+    @Column({ type: 'timestamp', nullable: true })
+    paidAt: Date;
+
     @ManyToOne(() => User, (user) => user.transactions)
     user: User;
 
