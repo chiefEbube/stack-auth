@@ -1,13 +1,10 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
-import * as express from 'express';
 import { setupSwagger } from './swagger/swagger.config';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  
-  app.use('/payments/paystack/webhook', express.raw({ type: 'application/json' }));
   
   app.useGlobalPipes(new ValidationPipe({
     whitelist: true,

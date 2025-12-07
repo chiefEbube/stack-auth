@@ -7,6 +7,7 @@ import {
   ApiHeader,
   ApiTags,
   ApiBody,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import {
   InitiatePaymentResponseDto,
@@ -17,11 +18,13 @@ import { InitiatePaymentDto } from 'src/payments/dto/initiate-payment.dto';
 
 export const ApiInitiatePayment = () =>
   applyDecorators(
+    ApiBearerAuth(),
     ApiOperation({
       summary: 'Initiate Paystack payment',
       description:
-        'Initializes a new payment transaction with Paystack. Validates the user and amount, ' +
-        'calls Paystack to create a transaction, and returns the authorization URL for payment.',
+        'Initializes a new payment transaction with Paystack. Requires JWT authentication. ' +
+        'Validates the authenticated user and amount, calls Paystack to create a transaction, ' +
+        'and returns the authorization URL for payment.',
     }),
     ApiBody({
       type: InitiatePaymentDto,
@@ -34,14 +37,28 @@ export const ApiInitiatePayment = () =>
     }),
     ApiResponse({
       status: 400,
-      description: 'Bad request - invalid input or user not found',
+      description: 'Bad request - invalid input',
       schema: {
         type: 'object',
         properties: {
           statusCode: { type: 'number', example: 400 },
           message: { 
             type: 'string', 
-            example: 'User ID is required. Please authenticate or provide user_id in request.' 
+            example: 'Invalid amount. Amount must be a positive integer in Kobo' 
+          },
+        },
+      },
+    }),
+    ApiResponse({
+      status: 401,
+      description: 'Unauthorized - JWT token required',
+      schema: {
+        type: 'object',
+        properties: {
+          statusCode: { type: 'number', example: 401 },
+          message: { 
+            type: 'string', 
+            example: 'Unauthorized' 
           },
         },
       },

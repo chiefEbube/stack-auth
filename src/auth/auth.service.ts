@@ -1,5 +1,6 @@
 import { Injectable, UnauthorizedException, InternalServerErrorException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { JwtService } from '@nestjs/jwt';
 import { UsersService } from 'src/users/users.service';
 import { User } from 'src/users/user.entity';
 import axios from 'axios';
@@ -15,6 +16,7 @@ export class AuthService {
     constructor(
         private usersService: UsersService,
         private configService: ConfigService,
+        private jwtService: JwtService,
     ) {}
 
     async getGoogleAuthUrl(): Promise<string> {
@@ -41,7 +43,7 @@ export class AuthService {
         return `https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}`;
     }
 
-    async handleGoogleCallback(code: string, state: string): Promise<User> {
+    async handleGoogleCallback(code: string, state: string): Promise<{ user: User; token: string }> {
         if (!code) {
             throw new InternalServerErrorException('Missing authorization code');
         }
@@ -65,13 +67,21 @@ export class AuthService {
                 sub: userInfo.id,
             });
 
-            return user;
+            // Generate JWT token
+            const token = this.generateJwtToken(user);
+
+            return { user, token };
         } catch (error) {
             if (error instanceof UnauthorizedException) {
                 throw error;
             }
             throw new InternalServerErrorException('Provider error');
         }
+    }
+
+    private generateJwtToken(user: User): string {
+        const payload = { sub: user.id, email: user.email };
+        return this.jwtService.sign(payload);
     }
 
     private async exchangeCodeForTokens(code: string) {

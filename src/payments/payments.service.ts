@@ -5,7 +5,6 @@ import { Repository } from 'typeorm';
 import { User } from 'src/users/user.entity';
 import { ConfigService } from '@nestjs/config';
 import axios from 'axios';
-import * as crypto from 'crypto';
 
 @Injectable()
 export class PaymentsService {
@@ -93,44 +92,9 @@ export class PaymentsService {
         }
     }
 
-    verifyWebhookSignature(signature: string, rawBody: Buffer | string): boolean {
-        const secret = this.configService.get<string>('PAYSTACK_SECRET_KEY');
-        if (!secret) {
-            throw new BadRequestException('Paystack secret key not configured');
-        }
-        
-        // Paystack signs the raw body string, not JSON stringified
-        const bodyString = typeof rawBody === 'string' ? rawBody : rawBody.toString('utf8');
-        const hash = crypto
-            .createHmac('sha512', secret)
-            .update(bodyString)
-            .digest('hex');
 
-        return hash === signature;
-    }
-
-    async processWebhook(event: any) {
-        if (event.event === 'charge.success') {
-            const { reference, paid_at } = event.data;
-
-            const transaction = await this.transactionRepository.findOne({ where: { reference } });
-            if (transaction) {
-                transaction.status = TransactionStatus.SUCCESS;
-                transaction.paidAt = paid_at ? new Date(paid_at) : new Date();
-                await this.transactionRepository.save(transaction);
-            }
-        } else if (event.event === 'charge.failed') {
-            const { reference } = event.data;
-            const transaction = await this.transactionRepository.findOne({ where: { reference } });
-            
-            if (transaction) {
-                transaction.status = TransactionStatus.FAILED;
-                await this.transactionRepository.save(transaction);
-            }
-        }
-    }
-
-    async verifyTransactionStatus(reference: string, refresh: boolean = false){
+    async verifyTransactionStatus(reference: string){
+        // First check if transaction exists in our database
         const transaction = await this.transactionRepository.findOne({ 
             where: { reference },
             relations: ['user']
@@ -140,19 +104,7 @@ export class PaymentsService {
             throw new BadRequestException('Transaction not found');
         }
 
-        // Return DB status if refresh is not requested and status is final
-        if (!refresh && 
-            (transaction.status === TransactionStatus.SUCCESS || 
-             transaction.status === TransactionStatus.FAILED)) {
-            return {
-                reference: transaction.reference,
-                status: transaction.status,
-                amount: transaction.amount,
-                paid_at: transaction.paidAt?.toISOString() || null
-            };
-        }
-
-        // Fetch live status from Paystack
+        // Always verify with Paystack to get the latest status
         const secretKey = this.configService.get<string>('PAYSTACK_SECRET_KEY');
         
         try {
@@ -166,6 +118,7 @@ export class PaymentsService {
             const paystackData = response.data.data;
             const paystackStatus = paystackData.status;
 
+            // Update transaction status based on Paystack response
             if (paystackStatus === 'success') {
                 transaction.status = TransactionStatus.SUCCESS;
                 transaction.paidAt = paystackData.paid_at ? new Date(paystackData.paid_at) : new Date();
@@ -182,6 +135,7 @@ export class PaymentsService {
                 paid_at: transaction.paidAt?.toISOString() || null
             };
         } catch (error) {
+            // Return database status as fallback
             return {
                 reference: transaction.reference,
                 status: transaction.status,

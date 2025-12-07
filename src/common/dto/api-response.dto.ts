@@ -26,6 +26,12 @@ export class GoogleCallbackResponseDto {
     example: 'John Doe',
   })
   name: string;
+
+  @ApiProperty({
+    description: 'JWT access token',
+    example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+  })
+  token: string;
 }
 
 export class InitiatePaymentResponseDto {
