@@ -1,7 +1,8 @@
-import { Transaction } from "src/payments/transaction.entity";
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn, CreateDateColumn } from "typeorm";
+import { Wallet } from "../modules/wallet/wallet.entity";
+import { ApiKey } from "../modules/api-keys/api-key.entity";
 
-@Entity()
+@Entity('users')
 export class User {
     @PrimaryGeneratedColumn('uuid')
     id: string;
@@ -15,9 +16,15 @@ export class User {
     @Column({ nullable: true })
     googleId: string;
 
-    @Column({ nullable: true })
-    profilePicture: string;
+    @Column({ nullable: true, name: 'avatar' })
+    avatar: string;
 
-    @OneToMany(() => Transaction, (transaction) => transaction.user)
-    transactions: Transaction[];
+    @OneToMany(() => Wallet, (wallet) => wallet.user)
+    wallets: Wallet[];
+
+    @OneToMany(() => ApiKey, (apiKey) => apiKey.user)
+    apiKeys: ApiKey[];
+
+    @CreateDateColumn({ name: 'created_at' })
+    createdAt: Date;
 }

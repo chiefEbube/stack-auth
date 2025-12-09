@@ -1,5 +1,14 @@
-import { Controller, Get, Query, Res, BadRequestException, UnauthorizedException, InternalServerErrorException } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Query,
+  UseGuards,
+  Req,
+  BadRequestException,
+} from '@nestjs/common';
 import { ApiTags, ApiExcludeEndpoint } from '@nestjs/swagger';
+import { AuthGuard } from '@nestjs/passport';
+import type { Request as ExpressRequest } from 'express';
 import { AuthService } from './auth.service';
 import { ApiGoogleAuth } from './swagger/auth.swagger';
 
@@ -10,43 +19,28 @@ export class AuthController {
 
     @Get('google')
     @ApiGoogleAuth()
-    async googleAuth(@Res() res: any) {
-        try {
-            const authUrl = await this.authService.getGoogleAuthUrl();
-            return res.json({ google_auth_url: authUrl });
-        } catch (error) {
-            throw new InternalServerErrorException('Failed to generate Google auth URL');
-        }
+  @UseGuards(AuthGuard('google'))
+  async googleAuth() {
+    // This will redirect to Google OAuth
     }
 
     @Get('google/callback')
     @ApiExcludeEndpoint()
-    async googleCallback(
-        @Query('code') code: string,
-        @Query('state') state: string,
-        @Query('error') error: string
-    ) {
+  @UseGuards(AuthGuard('google'))
+  async googleCallback(@Req() req: ExpressRequest, @Query('error') error: string) {
         if (error) {
             throw new BadRequestException(`OAuth error: ${error}`);
         }
 
-        if (!code) {
-            throw new BadRequestException('Missing authorization code');
-        }
+    const profile = (req as any).user;
+    const { user, token } = await this.authService.validateGoogleUser(profile);
 
-        try {
-            const { user, token } = await this.authService.handleGoogleCallback(code, state);
             return {
                 user_id: user.id,
                 email: user.email,
                 name: user.name,
-                token: token
+      avatar: user.avatar,
+      token,
             };
-        } catch (error) {
-            if (error instanceof UnauthorizedException) {
-                throw error;
-            }
-            throw new InternalServerErrorException('Provider error');
-        }
     }
 }
