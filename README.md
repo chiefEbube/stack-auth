@@ -58,7 +58,6 @@ DB_USERNAME=postgres
    # Paystack
    PAYSTACK_SECRET_KEY=sk_test_xxxxx
    PAYSTACK_PUBLIC_KEY=pk_test_xxxxx
-   PAYSTACK_WEBHOOK_SECRET=your-webhook-secret
 
    # CORS
    CORS_ORIGIN=http://localhost:3000
@@ -305,7 +304,7 @@ Wallet transfers use atomic database transactions to ensure:
 - Ensure database exists
 
 ### Paystack Webhook Not Working
-- Verify webhook secret matches Paystack dashboard
+- Verify webhook signature validation (uses PAYSTACK_SECRET_KEY)
 - Check webhook URL is accessible
 - Ensure raw body is being parsed correctly
 

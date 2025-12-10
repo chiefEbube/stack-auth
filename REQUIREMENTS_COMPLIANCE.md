@@ -137,3 +137,4 @@
 ## 📊 Overall Compliance: **98%**
 
 All mandatory requirements are met. The codebase fully satisfies the Stage 8 task requirements with enterprise-grade implementation.
+To Do: Check if each user entity should have wallet id

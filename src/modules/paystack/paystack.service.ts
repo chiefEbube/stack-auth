@@ -37,12 +37,10 @@ export class PaystackService {
   private readonly axiosInstance: AxiosInstance;
   private readonly secretKey: string;
   private readonly publicKey: string;
-  private readonly webhookSecret: string;
 
   constructor(private configService: ConfigService) {
     this.secretKey = this.configService.get<string>('PAYSTACK_SECRET_KEY') || '';
     this.publicKey = this.configService.get<string>('PAYSTACK_PUBLIC_KEY') || '';
-    this.webhookSecret = this.configService.get<string>('PAYSTACK_WEBHOOK_SECRET') || '';
 
     this.axiosInstance = axios.create({
       baseURL: 'https://api.paystack.co',
@@ -96,7 +94,7 @@ export class PaystackService {
     }
 
     const hash = crypto
-      .createHmac('sha512', this.webhookSecret)
+      .createHmac('sha512', this.secretKey)
       .update(payload)
       .digest('hex');
 

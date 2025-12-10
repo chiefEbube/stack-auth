@@ -26,5 +26,4 @@ export const envValidationSchema = Joi.object({
   // Paystack
   PAYSTACK_SECRET_KEY: Joi.string().required(),
   PAYSTACK_PUBLIC_KEY: Joi.string().required(),
-  PAYSTACK_WEBHOOK_SECRET: Joi.string().required(),
 });
