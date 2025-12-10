@@ -1,6 +1,6 @@
-# Enterprise-Grade Wallet Service
+# StackAuth Wallet Service
 
-A production-ready wallet service built with NestJS, TypeORM, PostgreSQL, Paystack integration, JWT authentication, and API key management.
+A wallet service built with NestJS, TypeORM, PostgreSQL, Paystack integration, JWT authentication, and API key management.
 
 ## 🚀 Features
 
@@ -157,13 +157,14 @@ http://localhost:3000/docs
    ```
    Returns Paystack authorization URL.
 
-2. **Check Deposit Status**
+2. **Check Deposit Status** (JWT or API Key with `read` permission)
    ```
    GET /wallet/deposit/:reference/status
    Authorization: Bearer <jwt_token>
    # OR
    X-API-Key: sk_live_xxxxx
    ```
+   Returns: `{ "reference": "...", "status": "pending|success|failed", "amount": 500000 }`
 
 ### Transfer
 
@@ -174,8 +175,8 @@ Authorization: Bearer <jwt_token>
 # OR
 X-API-Key: sk_live_xxxxx
 Body: {
-  "recipientWalletNumber": "12345678901234",
-  "amount": 100000  // in kobo
+  "wallet_number": "12345678901234",
+  "amount": 100000  // in kobo (minimum 100)
 }
 ```
 
@@ -188,14 +189,46 @@ Body: {
    # OR
    X-API-Key: sk_live_xxxxx
    ```
+   Returns: `{ "balance": 12000 }`
 
-2. **Get Transactions** (JWT or API Key with `read` permission)
+2. **Get My Wallet Info** (JWT or API Key with `read` permission)
+   ```
+   GET /wallet/me
+   Authorization: Bearer <jwt_token>
+   # OR
+   X-API-Key: sk_live_xxxxx
+   ```
+   Returns wallet number and balance for the authenticated user:
+   ```json
+   {
+     "wallet_number": "453812009812",
+     "balance": 12000
+   }
+   ```
+   This allows users to safely copy/share their wallet number for incoming transfers.
+
+3. **Get Transactions** (JWT or API Key with `read` permission)
    ```
    GET /wallet/transactions?limit=50&offset=0
    Authorization: Bearer <jwt_token>
    # OR
    X-API-Key: sk_live_xxxxx
    ```
+
+## 👥 User Operations
+
+**Get User Wallet** (Requires JWT)
+```
+GET /users/:userId/wallet
+Authorization: Bearer <jwt_token>
+```
+Returns wallet information for a specific user:
+```json
+{
+  "wallet_number": "453812009812",
+  "balance": 12000
+}
+```
 
 ## 🔔 Webhook
 
@@ -261,7 +294,7 @@ src/
 
 - `deposit`: Initialize Paystack deposits
 - `transfer`: Transfer funds between wallets
-- `read`: View balance and transactions
+- `read`: View balance, transactions, wallet info, and deposit status
 
 JWT tokens have full access to all endpoints.
 
