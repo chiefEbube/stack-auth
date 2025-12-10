@@ -16,12 +16,11 @@ import { GoogleStrategy } from './strategies/google.strategy';
     JwtModule.registerAsync({
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => {
-        const expiresIn = configService.get<string>('JWT_EXPIRES_IN') || '7d';
         return {
           secret: configService.get<string>('JWT_SECRET') || 'your-secret-key',
           signOptions: {
-            expiresIn: expiresIn,
-          },
+            expiresIn: configService.get<string>('JWT_EXPIRES_IN') || '7d',
+          } as any,
         };
       },
       inject: [ConfigService],

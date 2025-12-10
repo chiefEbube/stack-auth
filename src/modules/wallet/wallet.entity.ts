@@ -26,7 +26,7 @@ export class Wallet {
   walletNumber: string;
 
   @Column({ type: 'bigint', default: 0 })
-  balance: number; // Stored in kobo (smallest currency unit)
+  balance: string; // Stored in kobo (smallest currency unit) as string for bigint support
 
   @OneToMany(() => Transaction, (transaction) => transaction.wallet)
   transactions: Transaction[];

@@ -27,7 +27,7 @@ export async function seedDatabase(dataSource: DataSource) {
   const wallet = walletRepository.create({
     userId: savedUser.id,
     walletNumber: '12345678901234',
-    balance: 1000000, // 10,000 Naira in kobo
+    balance: '1000000',
   });
 
   const savedWallet = await walletRepository.save(wallet);
@@ -48,9 +48,9 @@ export async function seedDatabase(dataSource: DataSource) {
   });
 
   const savedApiKey = await apiKeyRepository.save(apiKey);
-  console.log('✅ Created API key:', savedApiKey.id);
-  console.log('📝 Test API Key:', `sk_live_${rawKey}`);
-  console.log('   (Store this securely - it will not be shown again)');
+  console.log('Created API key:', savedApiKey.id);
+  console.log('Test API Key:', `sk_live_${rawKey}`);
+  console.log('(Store this securely - it will not be shown again)');
 
-  console.log('🎉 Seeding completed!');
+  console.log('Seeding completed!');
 }

@@ -7,11 +7,7 @@ import { ApiKeysService } from '../api-keys.service';
 @Injectable()
 export class ApiKeyStrategy extends PassportStrategy(Strategy, 'api-key') {
   constructor(private apiKeysService: ApiKeysService) {
-    super((request: Request, done: (error: any, user?: any) => void) => {
-      this.validate(request)
-        .then((user) => done(null, user))
-        .catch((error) => done(error, null));
-    });
+    super();
   }
 
   async validate(request: Request): Promise<any> {

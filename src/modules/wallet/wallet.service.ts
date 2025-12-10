@@ -29,7 +29,7 @@ export class WalletService {
     const wallet = this.walletRepository.create({
       userId,
       walletNumber,
-      balance: 0,
+      balance: '0',
     });
 
     return this.walletRepository.save(wallet);
@@ -62,7 +62,7 @@ export class WalletService {
 
   async getBalance(userId: string): Promise<{ balance: number }> {
     const wallet = await this.getWalletByUserId(userId);
-    return { balance: wallet.balance };
+    return { balance: Number(wallet.balance) };
   }
 
   async initializeDeposit(
@@ -163,9 +163,7 @@ export class WalletService {
 
       // Credit wallet
       const wallet = existingTransaction.wallet;
-      const currentBalance = typeof wallet.balance === 'string' 
-        ? BigInt(wallet.balance) 
-        : BigInt(wallet.balance.toString());
+      const currentBalance = BigInt(wallet.balance);
       wallet.balance = (currentBalance + BigInt(amount)).toString();
       await queryRunner.manager.save(wallet);
 
@@ -192,12 +190,8 @@ export class WalletService {
     }
 
     // Check balance
-    const senderBalance = typeof senderWallet.balance === 'string'
-      ? BigInt(senderWallet.balance)
-      : BigInt(senderWallet.balance.toString());
-    const recipientBalance = typeof recipientWallet.balance === 'string'
-      ? BigInt(recipientWallet.balance)
-      : BigInt(recipientWallet.balance.toString());
+    const senderBalance = BigInt(senderWallet.balance);
+    const recipientBalance = BigInt(recipientWallet.balance);
 
     if (senderBalance < BigInt(dto.amount)) {
       throw new BadRequestException('Insufficient balance');

@@ -6,11 +6,11 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import * as bcrypt from 'bcryptjs';
 import * as crypto from 'crypto';
 import { ApiKey, ApiKeyPermission } from './api-key.entity';
 import { CreateApiKeyDto } from './dto/create-api-key.dto';
 import { RolloverApiKeyDto } from './dto/rollover-api-key.dto';
+import bcrypt from "bcryptjs";
 
 @Injectable()
 export class ApiKeysService {
