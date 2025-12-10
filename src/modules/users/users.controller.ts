@@ -22,25 +22,6 @@ export class UsersController {
     return this.usersService.findAll();
   }
 
-  @Get(':userId/wallet')
-  @ApiOperation({ summary: 'Get wallet info for a user' })
-  @ApiParam({ name: 'userId', description: 'User UUID' })
-  @ApiResponse({
-    status: 200,
-    description: 'Wallet information',
-    schema: {
-      type: 'object',
-      properties: {
-        wallet_number: { type: 'string', example: '453812009812' },
-        balance: { type: 'number', example: 12000 },
-      },
-    },
-  })
-  @ApiResponse({ status: 404, description: 'Wallet not found' })
-  async getUserWallet(@Param('userId') userId: string) {
-    return this.walletService.getWalletInfo(userId);
-  }
-
   @Get(':id')
   @ApiOperation({ summary: 'Get user by ID' })
   @ApiParam({ name: 'id', description: 'User UUID' })
