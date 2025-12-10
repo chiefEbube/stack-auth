@@ -19,9 +19,9 @@ export class AuthController {
 
     @Get('google')
     @ApiGoogleAuth()
-  @UseGuards(AuthGuard('google'))
   async googleAuth() {
-    // This will redirect to Google OAuth
+    const googleAuthUrl = this.authService.getGoogleAuthUrl();
+    return { google_auth_url: googleAuthUrl };
     }
 
     @Get('google/callback')

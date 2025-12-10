@@ -16,6 +16,27 @@ export class AuthService {
         private jwtService: JwtService,
     ) {}
 
+  getGoogleAuthUrl(): string {
+    const clientId = this.configService.get<string>('GOOGLE_CLIENT_ID');
+    const callbackUrl = this.configService.get<string>('GOOGLE_CALLBACK_URL');
+    const scopes = ['email', 'profile'];
+
+    if (!clientId || !callbackUrl) {
+      throw new InternalServerErrorException('Google OAuth configuration is missing');
+    }
+
+    const params = new URLSearchParams({
+      client_id: clientId,
+      redirect_uri: callbackUrl,
+      response_type: 'code',
+      scope: scopes.join(' '),
+      access_type: 'offline',
+      prompt: 'consent',
+    });
+
+    return `https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}`;
+  }
+
   async validateGoogleUser(profile: any): Promise<{ user: User; token: string }> {
     const { googleId, email, name, avatar } = profile;
             
