@@ -11,6 +11,8 @@ export function setupSwagger(app: INestApplication) {
     .setVersion('1.0')
     .addTag('auth', 'Google OAuth authentication endpoints')
     .addTag('payments', 'Paystack payment processing endpoints')
+    .addTag('users', 'User management endpoints')
+    .addBearerAuth()
     .build();
 
   const document = SwaggerModule.createDocument(app, config);

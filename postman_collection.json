@@ -1,0 +1,360 @@
+{
+  "info": {
+    "name": "Enterprise Wallet Service API",
+    "description": "Complete API collection for the Enterprise Wallet Service",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000",
+      "type": "string"
+    },
+    {
+      "key": "jwtToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "apiKey",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Google OAuth - Initiate",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/auth/google",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "google"]
+            },
+            "description": "Initiates Google OAuth flow. Redirects to Google consent screen."
+          }
+        },
+        {
+          "name": "Google OAuth - Callback",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/auth/google/callback?code=xxx&state=xxx",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "google", "callback"],
+              "query": [
+                {
+                  "key": "code",
+                  "value": "xxx"
+                },
+                {
+                  "key": "state",
+                  "value": "xxx"
+                }
+              ]
+            },
+            "description": "Google OAuth callback. Returns JWT token."
+          }
+        }
+      ]
+    },
+    {
+      "name": "API Keys",
+      "item": [
+        {
+          "name": "Create API Key",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwtToken}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"permissions\": [\"deposit\", \"transfer\", \"read\"],\n  \"expiry\": \"1M\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/keys/create",
+              "host": ["{{baseUrl}}"],
+              "path": ["keys", "create"]
+            },
+            "description": "Create a new API key. Store the returned key securely - it won't be shown again."
+          }
+        },
+        {
+          "name": "Rollover API Key",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwtToken}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"keyId\": \"uuid-here\",\n  \"expiry\": \"1M\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/keys/rollover",
+              "host": ["{{baseUrl}}"],
+              "path": ["keys", "rollover"]
+            }
+          }
+        },
+        {
+          "name": "List API Keys",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwtToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/keys",
+              "host": ["{{baseUrl}}"],
+              "path": ["keys"]
+            }
+          }
+        },
+        {
+          "name": "Revoke API Key",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwtToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/keys/:id",
+              "host": ["{{baseUrl}}"],
+              "path": ["keys", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "uuid-here"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Wallet",
+      "item": [
+        {
+          "name": "Initialize Deposit (JWT)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwtToken}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amount\": 500000\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/wallet/deposit",
+              "host": ["{{baseUrl}}"],
+              "path": ["wallet", "deposit"]
+            },
+            "description": "Initialize Paystack deposit. Amount in kobo."
+          }
+        },
+        {
+          "name": "Initialize Deposit (API Key)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-API-Key",
+                "value": "{{apiKey}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amount\": 500000\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/wallet/deposit",
+              "host": ["{{baseUrl}}"],
+              "path": ["wallet", "deposit"]
+            }
+          }
+        },
+        {
+          "name": "Check Deposit Status",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwtToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/wallet/deposit/:reference/status",
+              "host": ["{{baseUrl}}"],
+              "path": ["wallet", "deposit", ":reference", "status"],
+              "variable": [
+                {
+                  "key": "reference",
+                  "value": "paystack-reference"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Balance",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwtToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/wallet/balance",
+              "host": ["{{baseUrl}}"],
+              "path": ["wallet", "balance"]
+            }
+          }
+        },
+        {
+          "name": "Transfer Funds",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwtToken}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"recipientWalletNumber\": \"12345678901234\",\n  \"amount\": 100000\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/wallet/transfer",
+              "host": ["{{baseUrl}}"],
+              "path": ["wallet", "transfer"]
+            },
+            "description": "Transfer funds to another wallet. Amount in kobo."
+          }
+        },
+        {
+          "name": "Get Transactions",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwtToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/wallet/transactions?limit=50&offset=0",
+              "host": ["{{baseUrl}}"],
+              "path": ["wallet", "transactions"],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "50"
+                },
+                {
+                  "key": "offset",
+                  "value": "0"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Paystack Webhook",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-Paystack-Signature",
+                "value": "signature-here",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"event\": \"charge.success\",\n  \"data\": {\n    \"reference\": \"ref_123\",\n    \"amount\": 500000,\n    \"status\": \"success\",\n    \"customer\": {\n      \"email\": \"user@example.com\"\n    }\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/wallet/paystack/webhook",
+              "host": ["{{baseUrl}}"],
+              "path": ["wallet", "paystack", "webhook"]
+            },
+            "description": "Paystack webhook endpoint. Configure in Paystack dashboard."
+          }
+        }
+      ]
+    }
+  ]
+}
