@@ -30,7 +30,10 @@ import { envValidationSchema } from './config/env.validation';
         password: configService.get<string>('DB_PASSWORD'),
         database: configService.get<string>('DB_NAME'),
         autoLoadEntities: true,
-        synchronize: process.env.NODE_ENV !== 'production', // Disable in production
+        ssl:{
+          rejectUnauthorized: false,
+        },
+        synchronize: true,
         logging: process.env.NODE_ENV === 'development',
       }),
       inject: [ConfigService],
