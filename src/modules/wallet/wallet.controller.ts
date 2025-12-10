@@ -10,7 +10,7 @@ import {
   HttpStatus,
   Req,
 } from '@nestjs/common';
-import { ApiTags, ApiBearerAuth, ApiOperation, ApiQuery } from '@nestjs/swagger';
+import { ApiTags, ApiBearerAuth, ApiSecurity, ApiOperation, ApiQuery } from '@nestjs/swagger';
 import { WalletService } from './wallet.service';
 import { DepositDto } from './dto/deposit.dto';
 import { TransferDto } from './dto/transfer.dto';
@@ -22,7 +22,8 @@ import { ApiKeyPermissions } from '../../common/decorators/api-key-permissions.d
 @ApiTags('wallet')
 @Controller('wallet')
 @UseGuards(JwtOrApiKeyGuard, PermissionGuard)
-@ApiBearerAuth()
+@ApiBearerAuth('JWT-auth')
+@ApiSecurity('api-key')
 export class WalletController {
   constructor(private readonly walletService: WalletService) {}
 
