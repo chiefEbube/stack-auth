@@ -7,21 +7,17 @@ import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
 import { ResponseTransformInterceptor } from './common/interceptors/response-transform.interceptor';
 
 async function bootstrap() {
-  // Enable raw body for webhook signature verification
   const app = await NestFactory.create(AppModule, {
     rawBody: true,
   });
 
-  // Security middleware
   app.use(helmet());
 
-  // CORS
   app.enableCors({
     origin: process.env.CORS_ORIGIN || '*',
     credentials: true,
   });
   
-  // Global validation pipe
   app.useGlobalPipes(
     new ValidationPipe({
     whitelist: true,
@@ -33,7 +29,6 @@ async function bootstrap() {
     }),
   );
 
-  // Global interceptors
   app.useGlobalInterceptors(
     new LoggingInterceptor(),
     new ResponseTransformInterceptor(),

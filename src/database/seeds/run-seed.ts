@@ -1,7 +1,7 @@
 import { DataSource } from 'typeorm';
 import { config } from 'dotenv';
 import { seedDatabase } from './seed';
-import { User } from '../../users/user.entity';
+import { User } from '../../modules/users/user.entity';
 import { Wallet } from '../../modules/wallet/wallet.entity';
 import { ApiKey } from '../../modules/api-keys/api-key.entity';
 import { Transaction } from '../../modules/transactions/transaction.entity';

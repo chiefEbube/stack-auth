@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './user.entity';
 import { Repository } from 'typeorm';
-import { WalletService } from '../modules/wallet/wallet.service';
+import { WalletService } from '../wallet/wallet.service';
 
 interface GoogleUserProfile {
   email: string;

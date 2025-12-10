@@ -1,5 +1,5 @@
 import { DataSource } from 'typeorm';
-import { User } from '../../users/user.entity';
+import { User } from '../../modules/users/user.entity';
 import { Wallet } from '../../modules/wallet/wallet.entity';
 import * as bcrypt from 'bcryptjs';
 import { ApiKey } from '../../modules/api-keys/api-key.entity';
