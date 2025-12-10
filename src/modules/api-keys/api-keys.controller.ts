@@ -19,7 +19,7 @@ import { CurrentUser } from '../../common/decorators/current-user.decorator';
 @ApiTags('api-keys')
 @Controller('keys')
 @UseGuards(AuthGuard('jwt'))
-@ApiBearerAuth('JWT-auth')
+@ApiBearerAuth('auth-token')
 export class ApiKeysController {
   constructor(private readonly apiKeysService: ApiKeysService) {}
 

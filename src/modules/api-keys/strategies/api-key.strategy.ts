@@ -30,11 +30,26 @@ export class ApiKeyStrategy extends PassportStrategy(Strategy, 'api-key') {
   }
 
   private extractApiKey(request: Request): string | null {
-    return (
-      (request.headers['x-api-key'] as string) ||
-      (request.headers['api-key'] as string) ||
-      (request.query?.api_key as string) ||
-      null
-    );
+    if (request.headers['x-api-key']) {
+      return request.headers['x-api-key'] as string;
+    }
+    
+    if (request.headers['api-key']) {
+      return request.headers['api-key'] as string;
+    }
+    
+    if (request.query?.api_key) {
+      return request.query.api_key as string;
+    }
+    
+    const authHeader = request.headers.authorization;
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      const token = authHeader.substring(7);
+      if (token.startsWith('sk_live_')) {
+        return token;
+      }
+    }
+    
+    return null;
   }
 }

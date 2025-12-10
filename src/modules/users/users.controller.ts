@@ -8,7 +8,7 @@ import { WalletService } from '../wallet/wallet.service';
 @ApiTags('users')
 @Controller('users')
 @UseGuards(AuthGuard('jwt'))
-@ApiBearerAuth('JWT-auth')
+@ApiBearerAuth('auth-token')
 export class UsersController {
   constructor(
     private readonly usersService: UsersService,

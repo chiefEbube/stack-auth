@@ -16,18 +16,12 @@ export function setupSwagger(app: INestApplication) {
       {
         type: 'http',
         scheme: 'bearer',
-        bearerFormat: 'JWT',
-        name: 'JWT',
+        bearerFormat: 'JWT or API Key',
+        name: 'Authorization',
+        description: 'Enter JWT token or API key',
         in: 'header',
       },
-      'JWT-auth', // This name is used as the id to reference this security scheme
-    )
-    .addApiKey(
-      {
-        type: 'apiKey',
-        name: 'x-api-key',
-      },
-      'api-key', // This name is used as the id to reference this security scheme
+      'auth-token',
     )
     .build();
 
