@@ -2,7 +2,7 @@
 
 A wallet service built with NestJS, TypeORM, PostgreSQL, Paystack integration, JWT authentication, and API key management.
 
-## 🚀 Features
+## Features
 
 - **Google OAuth Authentication** → JWT tokens
 - **API Key Management** with permissions (deposit, transfer, read)
@@ -13,13 +13,13 @@ A wallet service built with NestJS, TypeORM, PostgreSQL, Paystack integration, J
 - **Comprehensive Security** (Helmet, CORS, Rate Limiting)
 - **Enterprise Architecture** (Modular, DDD, Clean Code)
 
-## 📋 Prerequisites
+## Prerequisites
 
 - Node.js (v18+)
 - PostgreSQL (v14+)
 - npm or yarn
 
-## 🛠️ Installation
+## Installation
 
 1. **Clone the repository**
    ```bash
@@ -83,14 +83,14 @@ npm run migration:run
    npm run start:prod
    ```
 
-## 📚 API Documentation
+## API Documentation
 
 Once the server is running, access Swagger documentation at:
 ```
 http://localhost:3000/docs
 ```
 
-## 🔐 Authentication
+## Authentication
 
 ### Google OAuth Flow
 
@@ -141,7 +141,7 @@ http://localhost:3000/docs
    Authorization: Bearer <jwt_token>
    ```
 
-## 💰 Wallet Operations
+## Wallet Operations
 
 ### Deposit
 
@@ -215,7 +215,7 @@ Body: {
    X-API-Key: sk_live_xxxxx
    ```
 
-## 👥 User Operations
+## User Operations
 
 **Get User Wallet** (Requires JWT)
 ```
@@ -230,7 +230,7 @@ Returns wallet information for a specific user:
 }
 ```
 
-## 🔔 Webhook
+## Webhook
 
 **Paystack Webhook** (No authentication - signature validated)
 ```
@@ -244,7 +244,7 @@ Configure webhook URL in Paystack dashboard:
 https://your-domain.com/wallet/paystack/webhook
 ```
 
-## 🧪 Testing
+## Testing
 
 ```bash
 # Unit tests
@@ -256,104 +256,3 @@ npm run test:e2e
 # Test coverage
 npm run test:cov
 ```
-
-## 📁 Project Structure
-
-```
-src/
-  config/              # Configuration files
-  common/              # Shared utilities
-    guards/            # Authentication & authorization guards
-    interceptors/      # Request/response interceptors
-    decorators/        # Custom decorators
-  modules/
-    auth/              # Authentication module (Google OAuth, JWT)
-    api-keys/          # API key management
-    wallet/            # Wallet operations
-    transactions/      # Transaction entities
-    paystack/          # Paystack integration
-    users/             # User management
-  database/
-    migrations/        # Database migrations
-  main.ts              # Application entry point
-```
-
-## 🔒 Security Features
-
-- **JWT Authentication** with expiration
-- **API Key Hashing** using bcrypt
-- **Webhook Signature Validation**
-- **Rate Limiting** (100 requests/minute)
-- **Helmet** for security headers
-- **CORS** configuration
-- **Input Validation** with class-validator
-- **SQL Injection Protection** via TypeORM
-- **No Secret Logging** in interceptors
-
-## 📝 API Key Permissions
-
-- `deposit`: Initialize Paystack deposits
-- `transfer`: Transfer funds between wallets
-- `read`: View balance, transactions, wallet info, and deposit status
-
-JWT tokens have full access to all endpoints.
-
-## 🚨 Error Handling
-
-The API returns proper HTTP status codes:
-- `400` - Bad Request (validation errors, insufficient balance)
-- `401` - Unauthorized (invalid/missing auth)
-- `403` - Forbidden (missing permissions)
-- `404` - Not Found (wallet/transaction not found)
-- `500` - Internal Server Error
-
-## 🔄 Database Transactions
-
-Wallet transfers use atomic database transactions to ensure:
-- Balance checks
-- Deduction from sender
-- Credit to recipient
-- Transaction log creation
-- All-or-nothing execution
-
-## 📦 Dependencies
-
-- **NestJS** - Framework
-- **TypeORM** - ORM
-- **PostgreSQL** - Database
-- **Passport** - Authentication
-- **JWT** - Token management
-- **Paystack** - Payment gateway
-- **bcrypt** - API key hashing
-- **Joi** - Environment validation
-- **Helmet** - Security headers
-- **Swagger** - API documentation
-
-## 🐛 Troubleshooting
-
-### Database Connection Issues
-- Verify PostgreSQL is running
-- Check database credentials in `.env`
-- Ensure database exists
-
-### Paystack Webhook Not Working
-- Verify webhook signature validation (uses PAYSTACK_SECRET_KEY)
-- Check webhook URL is accessible
-- Ensure raw body is being parsed correctly
-
-### API Key Validation Failing
-- Check key format: `sk_live_<hex>`
-- Verify key hasn't expired
-- Ensure key isn't revoked
-
-## 📄 License
-
-[Your License Here]
-
-## 👥 Contributors
-
-[Your Name/Team]
-
----
-
-**Built with ❤️ using NestJS**
