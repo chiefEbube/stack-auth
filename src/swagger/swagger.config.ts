@@ -5,12 +5,10 @@ export function setupSwagger(app: INestApplication) {
   const config = new DocumentBuilder()
     .setTitle('StackAuth API')
     .setDescription(
-      'Backend API for Google OAuth authentication and Paystack payment integration. ' +
-      'This API provides endpoints for user authentication via Google Sign-In and payment processing through Paystack.',
+      'Wallet Service with Paystack, JWT & API Keys.',
     )
     .setVersion('1.0')
     .addTag('auth', 'Google OAuth authentication endpoints')
-    .addTag('payments', 'Paystack payment processing endpoints')
     .addTag('users', 'User management endpoints')
     .addBearerAuth()
     .build();

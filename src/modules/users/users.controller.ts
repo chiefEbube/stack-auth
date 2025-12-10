@@ -3,19 +3,42 @@ import { ApiTags, ApiBearerAuth, ApiOperation, ApiResponse, ApiParam } from '@ne
 import { UsersService } from './users.service';
 import { AuthGuard } from '@nestjs/passport';
 import { User } from './user.entity';
+import { WalletService } from '../wallet/wallet.service';
 
 @ApiTags('users')
 @Controller('users')
 @UseGuards(AuthGuard('jwt'))
 @ApiBearerAuth()
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(
+    private readonly usersService: UsersService,
+    private readonly walletService: WalletService,
+  ) {}
 
   @Get()
   @ApiOperation({ summary: 'Get all users' })
   @ApiResponse({ status: 200, description: 'List of all users', type: [User] })
   async findAll() {
     return this.usersService.findAll();
+  }
+
+  @Get(':userId/wallet')
+  @ApiOperation({ summary: 'Get wallet info for a user' })
+  @ApiParam({ name: 'userId', description: 'User UUID' })
+  @ApiResponse({
+    status: 200,
+    description: 'Wallet information',
+    schema: {
+      type: 'object',
+      properties: {
+        wallet_number: { type: 'string', example: '453812009812' },
+        balance: { type: 'number', example: 12000 },
+      },
+    },
+  })
+  @ApiResponse({ status: 404, description: 'Wallet not found' })
+  async getUserWallet(@Param('userId') userId: string) {
+    return this.walletService.getWalletInfo(userId);
   }
 
   @Get(':id')

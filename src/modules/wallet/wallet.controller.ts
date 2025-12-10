@@ -54,6 +54,13 @@ export class WalletController {
     return this.walletService.getBalance(user.id);
   }
 
+  @Get('me')
+  @ApiKeyPermissions('read')
+  @ApiOperation({ summary: 'Get current user wallet info' })
+  async getMyWallet(@CurrentUser() user: { id: string }) {
+    return this.walletService.getWalletInfo(user.id);
+  }
+
   @Post('transfer')
   @ApiKeyPermissions('transfer')
   @ApiOperation({ summary: 'Transfer funds to another wallet' })

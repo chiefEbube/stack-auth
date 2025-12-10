@@ -7,7 +7,7 @@ import {
   CreateDateColumn,
   JoinColumn,
 } from 'typeorm';
-import { User } from '../../users/user.entity';
+import { User } from '../users/user.entity';
 import { Transaction } from '../transactions/transaction.entity';
 
 @Entity('wallets')
@@ -26,7 +26,7 @@ export class Wallet {
   walletNumber: string;
 
   @Column({ type: 'bigint', default: 0 })
-  balance: string; // Stored in kobo (smallest currency unit) as string for bigint support
+  balance: string;
 
   @OneToMany(() => Transaction, (transaction) => transaction.wallet)
   transactions: Transaction[];

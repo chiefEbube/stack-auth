@@ -1,6 +1,6 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn, CreateDateColumn } from "typeorm";
-import { Wallet } from "../modules/wallet/wallet.entity";
-import { ApiKey } from "../modules/api-keys/api-key.entity";
+import { Wallet } from "../wallet/wallet.entity";
+import { ApiKey } from "../api-keys/api-key.entity";
 
 @Entity('users')
 export class User {
