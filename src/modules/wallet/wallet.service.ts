@@ -266,13 +266,32 @@ export class WalletService {
     userId: string,
     limit: number = 50,
     offset: number = 0,
-  ): Promise<Transaction[]> {
+  ): Promise<any[]> {
     const wallet = await this.getWalletByUserId(userId);
-    return this.transactionRepository.find({
+    const transactions = await this.transactionRepository.find({
       where: { walletId: wallet.id },
       order: { createdAt: 'DESC' },
       take: limit,
       skip: offset,
+    });
+
+    // Transform transactions to remove wallet IDs from metadata
+    return transactions.map((transaction) => {
+      const { metadata, ...rest } = transaction;
+      const sanitizedMetadata = metadata ? { ...metadata } : {};
+
+      // Remove wallet IDs, keep only wallet numbers
+      if (sanitizedMetadata.recipientWalletId) {
+        delete sanitizedMetadata.recipientWalletId;
+      }
+      if (sanitizedMetadata.senderWalletId) {
+        delete sanitizedMetadata.senderWalletId;
+      }
+
+      return {
+        ...rest,
+        metadata: Object.keys(sanitizedMetadata).length > 0 ? sanitizedMetadata : null,
+      };
     });
   }
 

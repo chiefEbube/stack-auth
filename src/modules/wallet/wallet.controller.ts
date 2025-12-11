@@ -22,7 +22,7 @@ import { ApiKeyPermissions } from '../../common/decorators/api-key-permissions.d
 @ApiTags('wallet')
 @Controller('wallet')
 @UseGuards(JwtOrApiKeyGuard, PermissionGuard)
-@ApiBearerAuth()
+@ApiBearerAuth('auth-token')
 export class WalletController {
   constructor(private readonly walletService: WalletService) {}
 

@@ -22,17 +22,28 @@ import { envValidationSchema } from './config/env.validation';
 
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
-      useFactory: async (configService: ConfigService) => ({
-        type: 'postgres',
-        host: configService.get<string>('DB_HOST'),
-        port: configService.get<number>('DB_PORT'),
-        username: configService.get<string>('DB_USERNAME'),
-        password: configService.get<string>('DB_PASSWORD'),
-        database: configService.get<string>('DB_NAME'),
-        autoLoadEntities: true,
-        synchronize: process.env.NODE_ENV !== 'production', // Disable in production
-        logging: process.env.NODE_ENV === 'development',
-      }),
+      useFactory: async (configService: ConfigService) => {
+        const isProduction = configService.get<string>('NODE_ENV') === 'production';
+        const dbSsl = configService.get<string>('DB_SSL');
+        
+        // Enable SSL only in production or if explicitly enabled via DB_SSL env var
+        const sslConfig = (isProduction || dbSsl === 'true') 
+          ? { rejectUnauthorized: false }
+          : false;
+
+        return {
+          type: 'postgres',
+          host: configService.get<string>('DB_HOST'),
+          port: configService.get<number>('DB_PORT'),
+          username: configService.get<string>('DB_USERNAME'),
+          password: configService.get<string>('DB_PASSWORD'),
+          database: configService.get<string>('DB_NAME'),
+          autoLoadEntities: true,
+          ssl: sslConfig,
+          synchronize: true,
+          logging: process.env.NODE_ENV === 'development',
+        };
+      },
       inject: [ConfigService],
     }),
 

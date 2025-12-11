@@ -58,17 +58,36 @@ export class JwtOrApiKeyGuard implements CanActivate {
   private extractJwtToken(request: any): string | null {
     const authHeader = request.headers.authorization;
     if (authHeader && authHeader.startsWith('Bearer ')) {
-      return authHeader.substring(7);
+      const token = authHeader.substring(7);
+      if (token.startsWith('sk_live_')) {
+        return null;
+      }
+      return token;
     }
     return null;
   }
 
   private extractApiKey(request: any): string | null {
-    return (
-      request.headers['x-api-key'] ||
-      request.headers['api-key'] ||
-      request.query?.api_key ||
-      null
-    );
+    if (request.headers['x-api-key']) {
+      return request.headers['x-api-key'];
+    }
+    
+    if (request.headers['api-key']) {
+      return request.headers['api-key'];
+    }
+    
+    if (request.query?.api_key) {
+      return request.query.api_key;
+    }
+    
+    const authHeader = request.headers.authorization;
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      const token = authHeader.substring(7);
+      if (token.startsWith('sk_live_')) {
+        return token;
+      }
+    }
+    
+    return null;
   }
 }

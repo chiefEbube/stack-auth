@@ -23,7 +23,6 @@ export class ApiKeyGuard implements CanActivate {
       throw new UnauthorizedException('Invalid API key');
     }
 
-    // Attach user and key data to request
     request.user = { id: keyData.userId, type: 'api-key' };
     request.apiKey = keyData;
 
@@ -31,11 +30,26 @@ export class ApiKeyGuard implements CanActivate {
   }
 
   private extractApiKey(request: any): string | null {
-    return (
-      request.headers['x-api-key'] ||
-      request.headers['api-key'] ||
-      request.query?.api_key ||
-      null
-    );
+    if (request.headers['x-api-key']) {
+      return request.headers['x-api-key'];
+    }
+    
+    if (request.headers['api-key']) {
+      return request.headers['api-key'];
+    }
+    
+    if (request.query?.api_key) {
+      return request.query.api_key;
+    }
+    
+    const authHeader = request.headers.authorization;
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      const token = authHeader.substring(7);
+      if (token.startsWith('sk_live_')) {
+        return token;
+      }
+    }
+    
+    return null;
   }
 }
